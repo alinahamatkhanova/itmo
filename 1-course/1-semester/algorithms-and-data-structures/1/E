@@ -1,0 +1,38 @@
+#include <iostream>
+using namespace std;
+
+bool isPalindrome(string d, int a, int b) {
+    while (a < b) {
+        if (d[a] != d[b]) {
+            return false;
+        }
+        a++;
+        b--;
+    }
+    return true;
+}
+
+bool canBeFixed(string d) {
+    int a = 0;
+    int b = d.length() - 1;
+    while (a < b) {
+        if (d[a] != d[b]) {
+            return isPalindrome(d, a + 1, b) || isPalindrome(d, a, b - 1);
+        }
+        a++;
+        b--;
+    }
+    return true;
+}
+
+int main() {
+    int N;
+    string d;
+    cin >> N >> d;
+    if (canBeFixed(d)) {
+        cout << "YES" << endl;
+    } else {
+        cout << "NO" << endl;
+    }
+    return 0;
+}
