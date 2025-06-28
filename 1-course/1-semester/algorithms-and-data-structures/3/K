@@ -1,0 +1,67 @@
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
+using namespace std;
+
+struct Node {
+    Node* next;
+    Node(): next(NULL){
+    };
+};
+
+Node* qikl(Node*start){
+    Node* cherepaha = start;
+    Node* krolik = start;
+    while (krolik && krolik->next){
+        if (krolik == krolik->next){
+            return NULL;
+        }
+        cherepaha = cherepaha->next;
+        krolik = krolik->next->next;
+        if (cherepaha==krolik){
+            break;
+        }
+    }
+    if (!krolik || !krolik->next){
+        return NULL;
+    }
+    return krolik;
+}
+int main(){
+  int n;
+  cin >> n;
+  
+  string Nodes;
+  cin.ignore();
+  getline(cin, Nodes);
+  stringstream ss(Nodes);
+  
+  vector<Node> d(1+n);
+  int k = 1;
+  int indnode;
+  while (ss>>indnode){
+      d[k].next = &d[indnode];
+      k++;
+  }
+  Node* start = NULL;
+  for (int i = 1; i<=n; i++){
+      start = qikl(&d[i]);
+      if (start != NULL){
+          break;
+      }
+  }
+  if (start == NULL){
+      cout << -1;
+      return 0;
+  }
+  int dlink = 1;
+  Node* cherepaha = start;
+  cherepaha = cherepaha->next;
+  while (cherepaha!=start){
+     cherepaha = cherepaha->next;
+     dlink++;
+  }
+  cout << dlink;
+  return 0;
+}
