@@ -1,0 +1,43 @@
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+void digitalSort (vector<string> &a, int q){
+    for (int i = 0; i<q; i++){
+        vector<int> sortPod(10000, 0);
+        int index = a.front().size() -1 -i;
+        for (int i = 0; i<a.size(); i++){
+            char b = a[i][index];
+            sortPod[b]++;
+    }
+    int sum = 0;
+        for (int i = 0; i < sortPod.size(); ++i) {
+            int save = sortPod[i];
+            sortPod[i] = sum;
+            sum += save;
+        }
+
+        vector<string> buffer(a.size());
+        for (const auto& message : a) {
+            char symbol = message[index];
+            int in_result_vector_idx = sortPod[symbol];
+            buffer[in_result_vector_idx] = message;
+            sortPod[symbol]++;
+        }
+        a = buffer;
+    }
+}
+
+int main(){
+    int n, k, t;
+    cin >> n >> k >> t;
+    vector<string> a(n);
+    for (string& s:a){
+        cin >> s;
+    }
+    digitalSort(a, t);
+    for (string& s:a){
+        cout << s << '\n';
+    }
+}
