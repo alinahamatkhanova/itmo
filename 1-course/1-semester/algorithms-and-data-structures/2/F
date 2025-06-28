@@ -1,0 +1,53 @@
+#include <iostream>
+using namespace std;
+
+void swap(long long& a, long long& b) { //поменять местами элементы массива
+    long long temp = a;
+    a = b; b = temp;
+}
+int partition(long long** films, int low, int high) { //разделение массива на 2части: элементы, меньшие опорного элемента и элементы больше
+    long long pivot = films[high][0]; //опорный элемент-последний элемент массива
+    int i = low - 1;
+    for (int j = low; j <= high - 1; j++) {
+        if (films[j][0] > pivot) { //если текущий элемент[0] больше опорного элемента pivot
+            i++; swap(films[i][0], films[j][0]); swap(films[i][1], films[j][1]); //индекс увеличивается и значения меняются местами(это гарантирует, что элементы с рейтингами больше опорного элемента будут сдвигаться вправо от него)
+        }
+    }
+    swap(films[i + 1][0], films[high][0]); swap(films[i + 1][1], films[high][1]); //опорный элемент меняется местами.это помещает опорный элемент в правильную позицию в отсортированном массиве
+    return (i + 1); //функция возвращает индекс опорного элемента
+}
+void quickSort(long long** films, int low, int high) {//films - двумерный массив, low-индекс начального элемента в сортируемой части,high-индекс конечного элемента
+    if (low < high){
+        int pi = partition(films, low, high);
+        quickSort(films, low, pi - 1); quickSort(films, pi + 1, high);
+    }
+}
+int main() {
+    long long n, m, k;
+    cin >> n >> m >> k;
+    long long* critic_coeff = new long long[n];
+    for (int i = 0; i < n; ++i) { //ввожу значения коэффициентов критиков, которые сохраняются в массив critic_coeff
+        cin >> critic_coeff[i];
+    }
+    long long** film_ratings = new long long*[m]; //каждый элемент представляет рейтинг фильма и его индекс
+    for (int i = 0; i < m; ++i) {
+        long long film_rating = 0; long long inp_val;
+        film_ratings[i] = new long long[2];
+        film_ratings[i][1] = i;
+        for (int j = 0; j < n; ++j) {
+            cin >> inp_val;
+            film_rating += inp_val * critic_coeff[j];
+        }
+        film_rating = (film_rating % (1000000007) + 1000000007) % 1000000007;
+        film_ratings[i][0] = film_rating;
+    }
+    quickSort(film_ratings, 0, m - 1); //сортировка по убыванию рейтинга
+    for (int i = 0; i < k; ++i) {
+        cout << film_ratings[i][1] + 1 << ' '; //выводятся индексы фильмов, соответствующие топK рейтингу - просто индексы элементов в массиве
+    }
+    for (int i = 0; i < m; ++i) {
+        delete[] film_ratings[i];
+    }
+    delete[] film_ratings; delete[] critic_coeff;
+    return 0;
+}
