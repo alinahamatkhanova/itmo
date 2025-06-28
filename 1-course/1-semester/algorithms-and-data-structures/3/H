@@ -1,0 +1,66 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <list>
+using namespace std;
+
+class MyStack {
+    list<int> myStack;
+public:
+    void push(int x) {
+        myStack.push_back(x);
+    }
+    int pop() {
+        int a = myStack.back();
+        myStack.pop_back();
+        return a;
+    }
+    bool empty(){
+        return myStack.empty();
+    }
+    int top() {
+        return myStack.back();
+    }
+};
+
+int main() {
+    int n;
+    cin >> n;
+
+    vector<int64_t> w(n);
+    for (auto& razmer : w) {
+        cin >> razmer;
+    }
+
+    int64_t result = 0;
+    int i = 0;
+
+    MyStack a;
+    while (i < n) {
+        if (a.empty() || w[a.top()] <= w[i]) {
+            a.push(i);
+            i++;
+            continue;
+        }
+        int k = a.top();
+        a.pop();
+        int q = i;
+        if (!a.empty()) {
+            q = i - a.top() - 1;
+        }
+        int64_t promplosh = w[k] * q;
+        result = max(result, promplosh);
+    }
+
+    while (!a.empty()) {
+        int k = a.top();
+        a.pop();
+        int q = i;
+        if (!a.empty()) {
+            q = i - a.top() - 1;
+        }
+        int64_t promplosh = w[k] * q;
+        result = max(result, promplosh);
+    }
+    cout << result;
+}
