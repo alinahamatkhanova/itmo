@@ -1,0 +1,36 @@
+#include <iostream>
+#include <list>
+
+using namespace std;
+
+int main() {
+    int operations_count, size;
+    std::cin >> operations_count >> size;
+    list<int> backpack;
+
+    for (int i = 0; i < size && i < operations_count; ++i) {
+        int weight;
+        cin >> weight;
+        backpack.push_back(weight);
+    }
+
+    for (int i = 0; i < operations_count - size; ++i) {
+        int new_treasure_weight;
+        cin >> new_treasure_weight;
+        int back_treasure_wieght = backpack.back();
+        int front_treasure_wieght = backpack.front();
+        backpack.pop_back();
+        backpack.pop_front();
+
+        int heaviest_treasure_weight = max(max(back_treasure_wieght, front_treasure_wieght), new_treasure_weight);
+        int lightest_treasure_weight = min(min(back_treasure_wieght, front_treasure_wieght), new_treasure_weight);
+        int middle_treasure_weight = (new_treasure_weight + back_treasure_wieght + front_treasure_wieght) -
+            (heaviest_treasure_weight + lightest_treasure_weight);
+        backpack.push_back(middle_treasure_weight);
+        backpack.push_back(heaviest_treasure_weight);
+    }
+
+    for (auto treasure_weight : backpack) {
+        cout << treasure_weight << ' ';
+    }
+}
