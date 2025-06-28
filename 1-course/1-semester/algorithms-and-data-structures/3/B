@@ -1,0 +1,36 @@
+#include <iostream>
+#include <list>
+using namespace std;
+
+class myQueue {
+    list <int> myqueue;
+    public:
+    void push(int x) {
+        myqueue.push_back(x);
+    }
+    int pop(){
+        int a = myqueue.front();
+        myqueue.pop_front();
+        return a;
+    }
+};
+
+int main(){
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    int n;
+    cin >> n;
+    
+    myQueue b;
+    for (int i = 0; i < n; i++){
+        char c;
+        cin >> c;
+        if (c == '+'){
+            int d;
+            cin >> d;
+            b.push(d);
+        } else{
+            cout << b.pop() << '\n';
+        }
+    }
+}
