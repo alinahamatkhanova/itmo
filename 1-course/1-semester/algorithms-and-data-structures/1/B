@@ -1,0 +1,10 @@
+n, k = map(int, input().split())
+i = list(map(int, input().split()))
+if k > 0:
+    k = k % n
+    i = i[-k:] + i[:-k]
+else:
+    k = abs(k) % n
+    i = i[k:] + i[:k]
+
+print(*i)
