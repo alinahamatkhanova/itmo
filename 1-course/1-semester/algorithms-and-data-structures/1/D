@@ -1,0 +1,34 @@
+#include <iostream>
+#include <vector>
+ 
+using namespace std;
+ 
+ 
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+ 
+    int seasons_count, series_count, series_on_platform_count;
+    cin >> seasons_count >> series_count >> series_on_platform_count;
+ 
+    vector< vector< bool > > is_exist(1 + seasons_count, vector< bool >(1 + series_count, false));
+    int o = seasons_count * series_count;
+    for (int i = 0; i < series_on_platform_count; ++i) {
+        int episod_idx, season_idx;
+        cin >> episod_idx >> season_idx;
+ 
+        if (!is_exist[season_idx][episod_idx]) {
+            --o;
+            is_exist[season_idx][episod_idx] = true;
+        }
+    }
+    cout << o << '\n';
+    for (int i = 1; i <= seasons_count; ++i) {
+        for (int j = 1; j <= series_count; ++j) {
+            if (!is_exist[i][j])
+            cout << j << ' ' << i << '\n';
+        }
+    }
+ 
+    return 0;
+}
