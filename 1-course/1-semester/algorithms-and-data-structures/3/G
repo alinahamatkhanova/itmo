@@ -1,0 +1,41 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+bool Сheck(const vector<int>& chairs_coords, int people_count, int distance) {
+    int count = 1;
+    int last_coord = chairs_coords.front();
+    for (int coord : chairs_coords) {
+        if (coord - last_coord < distance) continue;
+        last_coord = coord;
+        ++count;
+    }
+    return count >= people_count;
+}
+
+int BinarySearchByAnswer(const vector<int>& chairs_coords, int people_count) {
+    int left = 0;
+    int right = chairs_coords.back() - chairs_coords.front() + 1;
+    while (left + 1 < right) {
+        int mid = left + (right - left) / 2;
+        if (Сheck(chairs_coords, people_count, mid)) {
+            left = mid;
+        } else {
+            right = mid;
+        }
+    }
+    return left;
+}
+
+int main() { 
+    int chairs_count, people_count;
+    cin >> chairs_count >> people_count;
+    vector<int> chairs_coords(chairs_count);
+    for (int& chair_coord : chairs_coords) {
+        cin >> chair_coord;
+    }
+    sort(begin(chairs_coords), end(chairs_coords));
+    cout << BinarySearchByAnswer(chairs_coords, people_count);
+}
