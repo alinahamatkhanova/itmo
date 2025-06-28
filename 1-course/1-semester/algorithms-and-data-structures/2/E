@@ -1,0 +1,49 @@
+#include <iostream>
+using namespace std;
+
+long long merge(int a[], int left, int mid, int right) {
+    int it1 = 0;
+    int it2 = 0;
+    int result[right - left];
+    long long count = 0;
+
+    for (int i = left; i < right; i++) {
+        if (left + it1 < mid && (mid + it2 >= right || a[left + it1] <= a[mid + it2])) {
+            result[i - left] = a[left + it1];
+            it1++;
+        } else {
+            result[i - left] = a[mid + it2];
+            it2++;
+            count += (mid - left - it1);
+        }
+    }
+
+    for (int i = left; i < right; i++) {
+        a[i] = result[i - left];
+    }
+    return count;
+}
+
+long long mergeSortRecursive(int a[], int left, int right) {
+    if (left + 1 >= right) {
+        return 0;
+    }
+    int mid = left + (right - left) / 2;
+    long long pairs = mergeSortRecursive(a, left, mid) + mergeSortRecursive(a, mid, right);
+    pairs += merge(a, left, mid, right);
+    return pairs;
+}
+
+int main() {
+    int n;
+    cin >> n;
+    int* a = new int[n];
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+    }
+    long long pairs = mergeSortRecursive(a, 0, n);
+    cout << pairs << endl;
+    delete[] a;
+    return 0;
+}
+/*
