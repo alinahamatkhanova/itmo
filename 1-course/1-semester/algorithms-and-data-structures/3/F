@@ -1,0 +1,49 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class myStack {
+    list <int> myStack;
+    public:
+    void push(int x) {
+        myStack.push_back(x);
+    }
+    int pop(){
+        int a = myStack.back();
+        myStack.pop_back();
+        return a;
+    }
+    bool empty(){
+        return myStack.empty();
+    }
+    int top(){
+        return myStack.back();
+    }
+};
+
+int main(){
+  int n;
+  cin >> n;
+  
+  vector<int> d(n);
+  for (int &e: d){
+      cin >> e;
+  }
+  myStack firstmaxright;
+  vector<int> result(n, -1);
+  for (int i = n-1; i>=0; i--){
+      while (!firstmaxright.empty()){
+          if (d [firstmaxright.top()] <= d[i]){
+              firstmaxright.pop();
+          }
+          else {
+              result[i] = firstmaxright.top() - i;
+              break;
+          }
+      }
+      firstmaxright.push(i);
+  }
+  for (int &e: result){
+      cout << e << ' ';
+  }
+}
