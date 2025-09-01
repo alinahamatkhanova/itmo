@@ -1,0 +1,127 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+struct TimeSalary {
+    long time, salary;
+};
+bool operator <(const TimeSalary& lhs, const TimeSalary& rhs) {
+    return tie(lhs.time, lhs.salary) < tie(rhs.time, rhs.salary);
+}
+
+struct SalaryTime {
+    long salary, time;
+};
+bool operator <(const SalaryTime& lhs, const SalaryTime& rhs) {
+    return tie(lhs.salary, lhs.time) < tie(rhs.salary, rhs.time);
+}
+
+template<typename A>
+class MinHeap {
+private:
+    vector<A> num;
+    
+    int parentIdx(int idx) {
+        return (idx - 1) / 2;
+    }
+    int leftIdx(int idx) {
+        return (2 * idx + 1);
+    }
+    int rightIdx(int idx) {
+        return (2 * idx + 2);
+    }
+
+    void SiftDown(int idx)
+    {
+        int leftChild = leftIdx(idx);
+        int rightChild = rightIdx(idx);
+        int small = idx;
+
+        if (leftChild < Size() && num[leftChild] < num[idx]) {
+            small = leftChild;
+        }
+        if (rightChild < Size() && num[rightChild] < num[small]) {
+            small = rightChild;
+        }
+        if (small != idx) {
+            swap(num[idx], num[small]);
+            SiftDown(small);
+        }
+    }
+
+    void SiftUp(int idx) {
+        if (idx == 0) return;
+
+        if (num[idx] < num[parentIdx(idx)]) {
+            swap(num[idx], num[parentIdx(idx)]);
+            SiftUp(parentIdx(idx));
+        }
+    }
+public:
+    int Size() {
+        return num.size();
+    }
+
+    bool Empty() {
+        return num.empty();
+    }
+
+    void Push(A value) {
+        num.push_back(value);
+        SiftUp(num.size() - 1);
+    }
+
+    void Pop()
+    {
+        if (num.empty()) return;
+
+        num.front() = num.back();
+        num.pop_back();
+        SiftDown(0);
+    }
+
+    A Top()
+    {
+        return num.front();
+    }
+
+    void DecreasePriority(int idx, int now) {
+        idx--;
+        if (idx < Size()) {
+            num[idx] = now;
+            return SiftUp(idx);
+        }
+    }
+};
+
+int main() {
+    ios_base::sync_with_stdio(false); cin.tie(nullptr);
+
+    int shawarmists, orders; cin >> shawarmists >> orders;
+
+    MinHeap<SalaryTime> free;
+    MinHeap<TimeSalary> busy;
+    for (int i = 0; i < shawarmists; ++i) {
+        long shawSalary; cin >> shawSalary;
+        free.Push({shawSalary, 0 });
+    }
+
+    long total = 0;
+    for (int i = 0; i < orders; ++i) {
+        long cur, required; cin >> cur >> required;
+
+        while (!busy.Empty() && busy.Top().time <= cur) {
+            free.Push({ busy.Top().salary, busy.Top().time });
+            busy.Pop();
+        }
+
+        if (free.Empty()) continue;
+
+        auto salary = free.Top().salary;
+        free.Pop();
+
+        busy.Push({ cur + required, salary });
+        total += required * salary;
+    }
+    cout << total;
+}
