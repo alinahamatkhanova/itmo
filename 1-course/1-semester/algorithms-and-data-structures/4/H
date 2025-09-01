@@ -1,0 +1,106 @@
+#include <iostream>
+using namespace std;
+
+void Print(int sign, string& number) {
+    if (number.empty()) {
+        cout << 0;
+        return;
+    }
+
+    reverse(begin(number), end(number));
+    if (sign == -1) {
+        cout << '-';
+    }
+    cout << number;
+}
+
+void GetSummand(int& summandSign, string& number) {
+    cin >> number;
+    reverse(begin(number), end(number));
+    if (number.back() == '-') {
+        summandSign = -1;
+        number.pop_back();
+    }
+}
+
+void operator-=(string& sum, string& summand) {
+    int i = 0;
+    int carry = 0;
+    while (i < summand.size() || carry) {
+        int value = -carry;
+        carry = 0;
+        value += (i < sum.size() ? (sum[i] - '0') : 0);
+        value -= (i < summand.size() ? (summand[i] - '0') : 0);
+
+        if (value < 0) {
+            value += 10;
+            carry = 1;
+        }
+        sum[i] = '0' + value;
+        i++;
+    }
+
+    while (!sum.empty() && sum.back() == '0') sum.pop_back();
+}
+
+void operator+=(string& sum, string& summand) {
+    int carry = 0;
+    int i = 0;
+    while (i < summand.size() || carry) {
+        int value = carry;
+        value += (i < summand.size() ? (summand[i] - '0') : 0);
+        value += (i < sum.size() ? (sum[i] - '0') : 0);
+        int cur = value % 10;
+        carry = value / 10;
+        if (i < sum.size()) {
+            sum[i] = '0' + cur;
+        } else {
+            sum.push_back('0' + cur);
+        }
+        i++;
+    }
+}
+
+bool Small(const string& sum, const string& summand) {
+    int sumSize = sum.size();
+    int summandSize = summand.size();
+
+    if (sumSize != summandSize) return sumSize < summandSize;
+
+    while (sumSize--) {
+        if (sum[sumSize] != summand[sumSize]) {
+            return sum[sumSize] < summand[sumSize];
+        }
+    }
+
+    return false;
+}
+
+void Add(int& sumSign, string& sum, int& summandSign, string& summand) {
+    if (Small(sum, summand)) {
+        swap(sum, summand);
+        swap(sumSign, summandSign);
+    }
+
+    if (sumSign == summandSign) {
+        sum += summand;
+        return;
+    }
+    sum -= summand;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false); cin.tie(nullptr);
+
+    int num; cin >> num;
+
+    string sum = "0";
+    int sumSign = 1;
+    for (int i = 0; i < num; ++i) {
+        int summandSign = 1;
+        string summand;
+        GetSummand(summandSign, summand);
+        Add(sumSign, sum, summandSign, summand);
+    }
+    Print(sumSign, sum);
+}
