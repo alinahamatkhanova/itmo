@@ -1,0 +1,136 @@
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+class MinHeap {
+private:
+    vector<int> numbers;
+
+    int GetParentIdx(int idx) {
+        return (idx - 1) / 2;
+    }
+
+    int GetLeftChildIdx(int idx) {
+        return (2 * idx + 1);
+    }
+
+    int GetRightChildIdx(int idx) {
+        return (2 * idx + 2);
+    }
+
+    void SiftDown(int idx)
+    {
+        int left_child_idx = GetLeftChildIdx(idx);
+        int right_child_idx = GetRightChildIdx(idx);
+        int smallest = idx;
+
+        if (left_child_idx < Size() && numbers[left_child_idx] < numbers[idx]) {
+            smallest = left_child_idx;
+        }
+
+        if (right_child_idx < Size() && numbers[right_child_idx] < numbers[smallest]) {
+            smallest = right_child_idx;
+        }
+
+        if (smallest != idx) {
+            swap(numbers[idx], numbers[smallest]);
+            SiftDown(smallest);
+        }
+    }
+
+    void SiftUp(int idx) {
+        if (idx == 0) return;
+
+        if (numbers[GetParentIdx(idx)] > numbers[idx]) {
+            swap(numbers[idx], numbers[GetParentIdx(idx)]);
+            SiftUp(GetParentIdx(idx));
+        }
+    }
+
+public:
+    int Size() {
+        return numbers.size();
+    }
+
+    bool Empty() {
+        return numbers.empty();
+    }
+
+    void Push(int value) {
+        numbers.push_back(value);
+        SiftUp(numbers.size() - 1);
+    }
+
+    void Pop()
+    {
+        if (numbers.empty()) return;
+
+        numbers.front() = numbers.back();
+        numbers.pop_back();
+        SiftDown(0);
+    }
+
+    int Top()
+    {
+        return numbers.front();
+    }
+
+    void DecreasePriority(int old_value, int new_value) {
+        for (int i = 0; i < numbers.size(); ++i) {
+            if (numbers[i] == old_value) {
+                numbers[i] = new_value;
+                SiftUp(i);
+                break;
+            }
+        }
+    }
+};
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    vector<MinHeap> min_heaps;
+    string command;
+    while (cin >> command) {
+        if (command == "create") {
+            min_heaps.push_back({});
+        }
+        else if (command == "insert") {
+            int idx, value;
+            cin >> idx >> value;
+            min_heaps[idx].Push(value);
+        }
+        else if (command == "extract-min") {
+            int idx;
+            cin >> idx;
+            if (min_heaps[idx].Size() == 0) {
+                cout << '*' << '\n';
+                continue;
+            }
+            cout << min_heaps[idx].Top() << '\n';
+            min_heaps[idx].Pop();
+        }
+        else if (command == "merge") {
+            int idx1, idx2;
+            cin >> idx1 >> idx2;
+            MinHeap new_min_heap = min_heaps[idx1];
+            MinHeap copy_min_heap2 = min_heaps[idx2];
+            while (!copy_min_heap2.Empty()) {
+                new_min_heap.Push(copy_min_heap2.Top());
+                copy_min_heap2.Pop();
+            }
+            min_heaps.push_back(new_min_heap);
+        }
+        else if (command == "decrease-key") {
+            int heap_idx, old_value, new_value;
+            cin >> heap_idx >> old_value >> new_value;
+            
+            if (heap_idx >= min_heaps.size()) continue;
+            
+            min_heaps[heap_idx].DecreasePriority(old_value, new_value);
+        }
+    }
+}
